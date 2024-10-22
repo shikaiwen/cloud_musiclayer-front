@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
+import { API_URL } from './download-history';
 
 interface VideoResult {
   id: string;
@@ -19,7 +20,7 @@ export function VideoSearch() {
 
   const handleSearch = async () => {
     try {
-      const response = await fetch(`http://localhost:8001/video/search?keywords=${encodeURIComponent(keyword)}`);
+      const response = await fetch(`${API_URL}/video/search?keywords=${encodeURIComponent(keyword)}`);
       const data = await response.json();
       const results = data.results
       if (Array.isArray(results)) {
@@ -41,7 +42,7 @@ export function VideoSearch() {
   const handleGetMp3 = async (record: any) => {
     try {
       const url = record.url
-      await fetch(`http://localhost:8001/download`, {
+      await fetch(`${API_URL}/download`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

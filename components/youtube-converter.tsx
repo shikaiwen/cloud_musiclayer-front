@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from "@/components/ui/use-toast"
+import { API_URL } from './download-history';
 
 export function YouTubeConverter() {
   const [url, setUrl] = useState('');
@@ -14,7 +15,7 @@ export function YouTubeConverter() {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch('http://localhost:8001/download', {
+      const response = await fetch(`${API_URL}/download`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url }),

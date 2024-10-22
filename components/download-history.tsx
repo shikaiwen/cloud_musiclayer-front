@@ -15,6 +15,8 @@ interface DownloadRecord {
 }
 
 const ITEMS_PER_PAGE = 10;
+export const API_URL = "http://43.207.212.126:8001";
+
 
 export function DownloadHistory() {
   const [history, setHistory] = useState<DownloadRecord[]>([]);
@@ -24,13 +26,14 @@ export function DownloadHistory() {
   const [isPlayingAll, setIsPlayingAll] = useState(false);
   const [currentPlayingIndex, setCurrentPlayingIndex] = useState(-1);
 
+
   useEffect(() => {
     fetchHistory();
   }, []);
 
   const fetchHistory = async () => {
     try {
-      const response = await fetch('http://localhost:8001/download-history');
+      const response = await fetch(`${API_URL}/download-history`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -53,7 +56,7 @@ export function DownloadHistory() {
       stopAudio();
     } else {
       stopAudio();
-      audioRef.current = new Audio(`http://localhost:8001/mp3/${filename}`);
+      audioRef.current = new Audio(`${API_URL}/mp3/${filename}`);
       audioRef.current.play();
       setCurrentlyPlaying(filename);
       setCurrentPlayingIndex(index);
@@ -91,7 +94,7 @@ export function DownloadHistory() {
 
   const deleteRecord = async (id: string) => {
     try {
-      const response = await fetch(`http://localhost:8001/download-history/${id}`, {
+      const response = await fetch(`${API_URL}/download-history/${id}`, {
         method: 'DELETE',
       });
       if (!response.ok) {
