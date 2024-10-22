@@ -1,29 +1,29 @@
 "use client"
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from "@/components/ui/use-toast"
 
 export function YouTubeConverter() {
   const [url, setUrl] = useState('');
-  const [storage, setStorage] = useState('dropbox');
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
-      const response = await fetch('/api/convert', {
+      const response = await fetch('http://localhost:8001/download', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url, storage }),
+        body: JSON.stringify({ url }),
       });
       
       if (response.ok) {
         toast({
           title: "Conversion started",
-          description: "Your video is being converted and will be saved to your selected storage.",
+          description: "Your video is being converted to MP3.",
         });
       } else {
         throw new Error('Conversion failed');
@@ -34,8 +34,20 @@ export function YouTubeConverter() {
         description: "Failed to start conversion. Please try again.",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (isLoading) {
+      timer = setTimeout(() => {
+        setIsLoading(false);
+      }, 10000);
+    }
+    return () => clearTimeout(timer);
+  }, [isLoading]);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -46,16 +58,12 @@ export function YouTubeConverter() {
         onChange={(e) => setUrl(e.target.value)}
         required
       />
-      <Select value={storage} onValueChange={setStorage}>
-        <SelectTrigger>
-          <SelectValue placeholder="Select storage" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="dropbox">Dropbox</SelectItem>
-          <SelectItem value="google-drive">Google Drive</SelectItem>
-        </SelectContent>
-      </Select>
-      <Button type="submit" className="w-full">Convert and Download</Button>
+      <Button type="submit" className="w-full" disabled={isLoading}>
+        {isLoading ? 'Converting...' : 'Convert and Download'}
+      </Button>
+      <Button onClick={() => window.location.reload()} className="w-full">
+        Refresh
+      </Button>
     </form>
   );
 }
