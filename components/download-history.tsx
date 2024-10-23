@@ -15,7 +15,9 @@ interface DownloadRecord {
 }
 
 const ITEMS_PER_PAGE = 10;
-export const API_URL = "http://43.207.212.126:8001";
+export const API_URL = "http://35.73.206.245:8001";
+// export const API_URL = "http://localhost:8001";
+
 
 
 export function DownloadHistory() {
